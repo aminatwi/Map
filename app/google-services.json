@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "5125734201",
+    "firebase_url": "https://tourismproject-97d0c.firebaseio.com",
+    "project_id": "tourismproject-97d0c",
+    "storage_bucket": "tourismproject-97d0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5125734201:android:7ab668a29e4d7b2d96f2e8",
+        "android_client_info": {
+          "package_name": "com.example.maya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5125734201-c35o0rp5d5svlbdtt912ahijq31uhk58.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maya",
+            "certificate_hash": "b5f5856b556574c4181486ba3e530eeab542523a"
+          }
+        },
+        {
+          "client_id": "5125734201-dkvur5eaoc03qmot53opu6o5qheglisj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS57TCgPbmLhLzdWlepb051VmgZYVcdo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5125734201-dkvur5eaoc03qmot53opu6o5qheglisj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
