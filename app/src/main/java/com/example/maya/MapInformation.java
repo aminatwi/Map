@@ -9,4 +9,5 @@ public class MapInformation {
     public String Hotel;
     public String Restaurant;
     public String Transport;
+    public int audio_number;
 }

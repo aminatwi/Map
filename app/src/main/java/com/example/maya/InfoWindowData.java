@@ -10,11 +10,12 @@ public class InfoWindowData {
     private String hotel;
     private String food;
     private String transport;
+    private int audio_number;
 
     public InfoWindowData() {
     }
 
-    public InfoWindowData(int id, Double V, Double V1, String image, String title, String snippet, String hotel, String food, String transport) {
+    public InfoWindowData(int id, Double V, Double V1, String image, String title, String snippet, String hotel, String food, String transport,int audio_number) {
         this.Id = id;
         this.V = V;
         this.V1 = V1;
@@ -24,6 +25,7 @@ public class InfoWindowData {
         this.hotel = hotel;
         this.food = food;
         this.transport = transport;
+        this.audio_number=audio_number;
     }
 
     public int getId() {
@@ -96,5 +98,13 @@ public class InfoWindowData {
 
     public void setTransport(String transport) {
         this.transport = transport;
+    }
+
+    public int getAudio_number() {
+        return audio_number;
+    }
+
+    public void setAudio_number(int audio_number) {
+        this.audio_number = audio_number;
     }
 }

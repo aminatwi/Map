@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -65,14 +66,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setBuildingsEnabled(true);
         mMap.setMinZoomPreference(10);
-       //  insertInformation();
+         insertInformation();
         SetMapInformation();
 
     }
 
+    public String[] nbs(double v,double v1){
+        String [] r=new String[2];
+        String vv=""+v;
+        String vv1=""+v1;
+        String a=""+vv.charAt(3)+vv.charAt(4);
+        String b=""+vv1.charAt(3)+vv1.charAt(4);
+        r[0]=a;
+        r[1]=b;
+        return r;
+    }
+    public ArrayList<Restaurant> nearRestaurants(double v,double v1){
+        ArrayList<Restaurant> nearest=new ArrayList<>();
+
+        for(int i=0;i<dbHandler.getAllRestaurants().size();i++){
+            if(Arrays.equals(nbs(v,v1),nbs(dbHandler.getAllRestaurants().get(i).getV(),dbHandler.getAllRestaurants().get(i).getV1()))){
+                nearest.add(dbHandler.getAllRestaurants().get(i));
+            }
+        }
+        return nearest;
+    }
+    public ArrayList<Hotel> nearHotels(double v,double v1){
+        ArrayList<Hotel> nearest=new ArrayList<>();
+
+        for(int i=0;i<dbHandler.getAllHotels().size();i++){
+            if(Arrays.equals(nbs(v,v1),nbs(dbHandler.getAllHotels().get(i).getV(),dbHandler.getAllHotels().get(i).getV1()))){
+                nearest.add(dbHandler.getAllHotels().get(i));
+            }
+        }
+        return nearest;
+    }
     private void insertInformation() {
         InfoWindowData info = new InfoWindowData();
-      /*  info.setV(33.4510800);
+        info.setV(33.4510800);
         info.setV1(35.48870000);
         info.setTitle("Maya Home");
         info.setSnippet("Maya Home located in Ain Qana.");
@@ -80,7 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         info.setFood("Food : all types of restaurants available");
         info.setTransport("Reach the site by bus, car and train.");
         info.setImage("png/Maya.png");
-        dbHandler.AddInfoWindowData(info);*/
+        dbHandler.AddInfoWindowData(info);
     }
 
 
