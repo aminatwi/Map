@@ -343,4 +343,44 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
     }
+    public Restaurant getWebsiteR(String s){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =db.query(  TABLE_Restaurant ,
+                new String[]{KEY_ID,Restaurant_V,Restaurant_V1,Restaurant_name,Restaurant_desc},
+                Restaurant_name + "=?",
+                new String[] { s }, null, null, null, null);
+        if (cursor != null){
+            cursor.moveToFirst();
+            Restaurant resto = new Restaurant(Integer.parseInt(cursor.getString(0)),
+                    Double.parseDouble(cursor.getString(1)),
+                    Double.parseDouble(cursor.getString(2)),
+                    cursor.getString(3),
+                    cursor.getString(4));
+            db.close();
+            return resto;
+        }else{
+            db.close();
+            return null;
+        }
+    }
+    public Hotel getWebsiteH(String s){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =db.query(  TABLE_Hotel ,
+                new String[]{KEY_ID,Hotel_V,Hotel_V1,Hotel_name,Hotel_desc},
+                Hotel_name + "=?",
+                new String[] { s }, null, null, null, null);
+        if (cursor != null){
+            cursor.moveToFirst();
+            Hotel hotel = new Hotel(Integer.parseInt(cursor.getString(0)),
+                    Double.parseDouble(cursor.getString(1)),
+                    Double.parseDouble(cursor.getString(2)),
+                    cursor.getString(3),
+                    cursor.getString(4));
+            db.close();
+            return hotel;
+        }else{
+            db.close();
+            return null;
+        }
+    }
 }

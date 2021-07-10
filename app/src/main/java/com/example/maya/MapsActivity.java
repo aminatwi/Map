@@ -8,12 +8,18 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,8 +33,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    public final static String MODULE_MAC = "98:D3:34:90:6F:A1";
+    public final static int REQUEST_ENABLE_BT = 1;
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+
+    BluetoothAdapter bta;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+    ConnectedThread btt = null;
+    Button switchLight, switchRelay;
+    TextView response;
+    boolean lightflag = false;
+    boolean relayFlag = true;
+    public Handler mHandler;
 
     private GoogleMap mMap;
     private AssetManager assetManager;
@@ -45,7 +66,83 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         init();
+        bta = BluetoothAdapter.getDefaultAdapter();
+
+        //if bluetooth is not enabled then create Intent for user to turn it on
+        if(!bta.isEnabled()){
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
+        }else{
+            initiateBluetoothProcess();
+        }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK && requestCode == REQUEST_ENABLE_BT){
+            initiateBluetoothProcess();
+        }
+    }
+    public void initiateBluetoothProcess() {
+
+        if (bta.isEnabled()) {
+
+            //attempt to connect to bluetooth module
+            BluetoothSocket tmp = null;
+            mmDevice = bta.getRemoteDevice(MODULE_MAC);
+
+            //create socket
+            try {
+                tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                mmSocket = tmp;
+                mmSocket.connect();
+                Log.i("[BLUETOOTH]", "Connected to: " + mmDevice.getName());
+            } catch (IOException e) {
+                try {
+                    mmSocket.close();
+                } catch (IOException c) {
+                    return;
+                }
+            }
+
+            Log.i("[BLUETOOTH]", "Creating handler");
+            mHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    //super.handleMessage(msg);
+                    if (msg.what == ConnectedThread.RESPONSE_MESSAGE) {
+                        String txt = (String) msg.obj;
+                        if (response.getText().toString().length() >= 30) {
+                            response.setText("");
+                            response.append(txt);
+                        } else {
+                            response.append("\n" + txt);
+                        }
+                    }
+                }
+            };
+
+            Log.i("[BLUETOOTH]", "Creating and running Thread");
+            btt = new ConnectedThread(mmSocket, mHandler);
+            btt.start();
+
+
+        }
+    }
+    //use this function if u want to send data to arduino!!!!!!!!!!!!
+    /*********************
+    public void sendData(String message) {
+        Log.i("[BLUETOOTH]", "Attempting to send data");
+        if (mmSocket.isConnected() && btt != null) { //if we have connection to the bluetoothmodule
+
+                btt.write(message.getBytes());
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+        }
+    }
+*********************/
 
 
     /**
@@ -66,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setBuildingsEnabled(true);
         mMap.setMinZoomPreference(10);
-         insertInformation();
+        //insertInformation();
         SetMapInformation();
 
     }
@@ -102,44 +199,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return nearest;
     }
     private void insertInformation() {
+/*
         Restaurant restaurant=new Restaurant();
         //restaurant.setId(1);
         restaurant.setV(33.4511800);
         restaurant.setV1(35.48880000);
-        restaurant.setName("McDonalds");
-        restaurant.setDescription("Good food");
+        restaurant.setName("Tayyoun Restaurant");
+        restaurant.setDescription("https://www.facebook.com/Tayyounrestaurant/");
         dbHandler.AddRestautrant(restaurant);
 
         Restaurant restaurant2=new Restaurant();
         //restaurant2.setId(2);
         restaurant2.setV(33.9796587);
         restaurant2.setV1(35.6509818);
-        restaurant2.setName("Pizza Hut");
-        restaurant2.setDescription("Good food");
+        restaurant2.setName("Amar Harissa Restaurant");
+        restaurant2.setDescription("http://www.amarrestaurants.com/");
         dbHandler.AddRestautrant(restaurant2);
 
         Restaurant restaurant3=new Restaurant();
         //restaurant3.setId(3);
         restaurant3.setV(33.9796587);
         restaurant3.setV1(35.6509818);
-        restaurant3.setName("Burger King");
-        restaurant3.setDescription("Good food");
+        restaurant3.setName("Beit Youssef Restaurant");
+        restaurant3.setDescription("https://www.facebook.com/BeitYoussefRestaurant/");
         dbHandler.AddRestautrant(restaurant3);
 
         Hotel hotel=new Hotel();
         //hotel.setId(1);
         hotel.setV(33.9795586);
         hotel.setV1(35.6518918);
-        hotel.setName("Harissa Hotel");
-        hotel.setDescription("5 stars hotel");
+        hotel.setName("Madisson Hotel");
+        hotel.setDescription("http://madissonhotel.com/");
         dbHandler.AddHotel(hotel);
 
         Hotel hotel1=new Hotel();
         //hotel.setId(2);
         hotel1.setV(33.9795585);
         hotel1.setV1(35.6518933);
-        hotel1.setName("Grand Hotel");
-        hotel1.setDescription("4 stars hotel");
+        hotel1.setName("Lamedina Hotel");
+        hotel1.setDescription("https://lamedinagroup.com/");
         dbHandler.AddHotel(hotel1);
 
         InfoWindowData info = new InfoWindowData();
@@ -148,19 +246,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         info.setV1(35.48870000);
         info.setTitle("Maya Home");
         info.setSnippet("Maya Home located in Ain Qana.");
-        String h="Hotels near:\n";
-        for(int i=0;i<nearHotels(info.getV(),info.getV1()).size();i++){
-            h+="\n"+nearHotels(info.getV(),info.getV1()).get(i).getName();
-        }
-        if(nearHotels(info.getV(),info.getV1()).size()==0) info.setHotel("No Hotels near");
-        else info.setHotel(h);
+        ArrayList<String> listH1=new ArrayList<>();
 
-        String r="Restaurants near:\n";
-        for(int i=0;i<nearRestaurants(info.getV(),info.getV1()).size();i++){
-            r+="\n"+nearRestaurants(info.getV(),info.getV1()).get(i).getName();
+        for(int i=0;i<nearHotels(info.getV(),info.getV1()).size();i++){
+            listH1.add(nearHotels(info.getV(),info.getV1()).get(i).getName());
         }
-        if(nearRestaurants(info.getV(),info.getV1()).size()==0) info.setFood("No near restaurants");
-        else info.setFood(r);
+        if(nearHotels(info.getV(),info.getV1()).size()==0) info.setHotel("none");
+        else info.setHotel(listH1.toString());
+
+        ArrayList<String> listR1=new ArrayList<>();
+        for(int i=0;i<nearRestaurants(info.getV(),info.getV1()).size();i++){
+            listR1.add(nearRestaurants(info.getV(),info.getV1()).get(i).getName());
+        }
+        if(nearRestaurants(info.getV(),info.getV1()).size()==0)
+            info.setFood("none");
+        else info.setFood(listR1.toString());
 
         info.setTransport("Reach the site by bus, car and train.");
         info.setImage("png/Maya.png");
@@ -173,18 +273,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         info2.setV1(35.6508818);
         info2.setTitle("Harissa");
         info2.setSnippet("Lady of Lebanon");
-        String hh="Hotels near:\n";
+        ArrayList<String> listH2=new ArrayList<>();
         for(int i=0;i<nearHotels(info2.getV(),info2.getV1()).size();i++){
-            hh+="\n"+nearHotels(info2.getV(),info2.getV1()).get(i).getName();
+            listH2.add(nearHotels(info2.getV(),info2.getV1()).get(i).getName());
         }
-        if(nearHotels(info2.getV(),info2.getV1()).size()==0) info2.setHotel("No near hotels");
-        else info2.setHotel(hh);
-        String rr="Restaurants near:\n";
+        if(nearHotels(info2.getV(),info2.getV1()).size()==0) info2.setHotel("none");
+        else info2.setHotel(listH2.toString());
+        ArrayList<String> listR2=new ArrayList<>();
         for(int i=0;i<nearRestaurants(info2.getV(),info2.getV1()).size();i++){
-            rr+="\n"+nearRestaurants(info2.getV(),info2.getV1()).get(i).getName();
+            listR2.add(nearRestaurants(info2.getV(),info2.getV1()).get(i).getName());
         }
-        if(nearRestaurants(info2.getV(),info2.getV1()).size()==0) info2.setFood("No near restaurants");
-        else info2.setFood(rr);
+        if(nearRestaurants(info2.getV(),info2.getV1()).size()==0) info2.setFood("none");
+        else info2.setFood(listR2.toString());
         info2.setTransport("Reach the site by bus, car and train.");
         info2.setImage("png/Harissa.png");
         //info2.setAudio_number(1);
@@ -212,8 +312,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dbHandler.AddImage(img3);
         dbHandler.AddImage(img2);
         dbHandler.AddImage(img1);
-
-
+*/
     }
 
 
@@ -251,6 +350,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent intent = new Intent(MapsActivity.this,MoreInformation.class);
                 intent.putExtra("InfoID", info.getId());
                 startActivity(intent);
+
             }
         });
 

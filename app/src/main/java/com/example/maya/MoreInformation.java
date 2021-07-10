@@ -5,15 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MoreInformation extends AppCompatActivity {
 
@@ -23,6 +28,7 @@ public class MoreInformation extends AppCompatActivity {
     public ArrayList<String> images;
     public AssetManager assetManager;
     public String ImageName;
+    public ArrayList<String> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,10 +37,23 @@ public class MoreInformation extends AppCompatActivity {
         this.InfoID = intent.getIntExtra("InfoID",0);
         this.dbHandler = new DBHandler(this);
         images=new ArrayList<>();
+        list=new ArrayList<>();
         assetManager=this.getAssets();
         init();
+
     }
 
+    ArrayList<String> stringToArray(String t){
+
+        String s=""+t.subSequence(1, t.length()-1);
+        String [] f=s.split(",");
+        ArrayList<String> o=new ArrayList<>();
+        for(int i=0;i<f.length;i++){
+            o.add(f[i]);
+        }
+        return o;
+
+    }
     private void init() {
         this.InfoWindowData = this.dbHandler.getInfoWindowData(this.InfoID);
         ImageName=this.InfoWindowData.getImage();
@@ -44,14 +63,58 @@ public class MoreInformation extends AppCompatActivity {
         TextView details_tv = view.findViewById(R.id.details);
         TextView hotel_tv = view.findViewById(R.id.hotels);
         TextView food_tv = view.findViewById(R.id.food);
-        TextView transport_tv = view.findViewById(R.id.transport);
+        ListView listR= view.findViewById(R.id.listR);
+        ListView listH=view.findViewById(R.id.listH);
+
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         try {
             name_tv.setText(this.InfoWindowData.getTitle());
+
             details_tv.setText(this.InfoWindowData.getSnippet());
-            hotel_tv.setText(this.InfoWindowData.getHotel());
-            food_tv.setText(this.InfoWindowData.getFood());
-            transport_tv.setText(this.InfoWindowData.getTransport());
+
+            if(this.InfoWindowData.getHotel().equals("none"))
+            hotel_tv.setText("No Hotels Near\n");
+            else {
+                hotel_tv.setText("Hotels Near:\n");
+                ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,stringToArray(this.InfoWindowData.getHotel()));
+                listH.setAdapter(adapter);
+
+                listH.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String str = parent.getItemAtPosition(position).toString();
+                        if(str.charAt(0)==' ') str=str.substring(1);
+                        System.out.println("["+str+"]");
+                        String website=dbHandler.getWebsiteH(str).getDescription();
+                        Uri webpage = Uri.parse(website);
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+                        startActivity(webIntent);
+                    }
+                });
+            }
+
+
+
+            if(this.InfoWindowData.getFood().equals("none"))
+            food_tv.setText("No Restaurants Near\n");
+            else {
+                food_tv.setText("Restaurants Near:\n");
+                ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,stringToArray(this.InfoWindowData.getFood()));
+                listR.setAdapter(adapter);
+
+                listR.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String str = parent.getItemAtPosition(position).toString();
+                        if(str.charAt(0)==' ') str=str.substring(1);
+                        System.out.println("["+str+"]");
+                        String website=dbHandler.getWebsiteR(str).getDescription();
+                        Uri webpage = Uri.parse(website);
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+                        startActivity(webIntent);
+                    }
+                });
+            }
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -85,4 +148,5 @@ public class MoreInformation extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 }
