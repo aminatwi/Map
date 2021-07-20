@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,9 +9,9 @@
     android:orientation="vertical"
     android:id="@+id/layout"
     >
-
     <TextView
         android:id="@+id/name"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,8 +36,9 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_marginTop="8dp"
+        android:layout_marginLeft="10dp"
         android:singleLine="false"
         android:textAlignment="viewStart"
         tools:ignore="RtlCompat"
@@ -52,8 +56,10 @@
         android:gravity="left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+
         android:textSize="17sp"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        android:textColor="@color/common_google_signin_btn_text_light_focused"
         />
     <ListView
         android:id="@+id/listH"
@@ -66,8 +72,9 @@
         android:gravity="left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:textSize="17sp"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        android:textColor="@color/common_google_signin_btn_text_light_focused"
         />
     <ListView
         android:id="@+id/listR"
@@ -77,3 +84,4 @@
 
 
 </LinearLayout>
+</ScrollView>

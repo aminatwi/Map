@@ -73,9 +73,9 @@ public class MoreInformation extends AppCompatActivity {
             details_tv.setText(this.InfoWindowData.getSnippet());
 
             if(this.InfoWindowData.getHotel().equals("none"))
-            hotel_tv.setText("No Hotels Near\n");
+            hotel_tv.setText("  No Hotels Near\n");
             else {
-                hotel_tv.setText("Hotels Near:\n");
+                hotel_tv.setText("  Hotels Near:\n");
                 ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,stringToArray(this.InfoWindowData.getHotel()));
                 listH.setAdapter(adapter);
 
@@ -96,9 +96,9 @@ public class MoreInformation extends AppCompatActivity {
 
 
             if(this.InfoWindowData.getFood().equals("none"))
-            food_tv.setText("No Restaurants Near\n");
+            food_tv.setText("  No Restaurants Near\n");
             else {
-                food_tv.setText("Restaurants Near:\n");
+                food_tv.setText("  Restaurants Near:\n");
                 ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,stringToArray(this.InfoWindowData.getFood()));
                 listR.setAdapter(adapter);
 
