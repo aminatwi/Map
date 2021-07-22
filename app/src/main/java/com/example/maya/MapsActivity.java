@@ -37,7 +37,7 @@ import java.util.UUID;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    public final static String MODULE_MAC = "98:D3:34:90:6F:A1";
+    public final static String MODULE_MAC = "98:D3:71:F9:89:8E";
     public final static int REQUEST_ENABLE_BT = 1;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
@@ -380,7 +380,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         info.setTransport("Reach the site by bus, car and train.");
         info.setImage("png/faraya.png");
-        info.setAudio_number(1);
+        info.setAudio_number(2);
         dbHandler.AddInfoWindowData(info);
 
         InfoWindowData info2 = new InfoWindowData();
@@ -397,7 +397,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else info2.setFood(listR2.toString());
         info2.setTransport("Reach the site by bus, car and train.");
         info2.setImage("png/Harissa.png");
-        info2.setAudio_number(2);
+        info2.setAudio_number(3);
         dbHandler.AddInfoWindowData(info2);
 
         InfoWindowData info3 = new InfoWindowData();
@@ -414,7 +414,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else info3.setFood(listR3.toString());
         info3.setTransport("Reach the site by bus, car and train.");
         info3.setImage("png/baalbak.png");
-        info3.setAudio_number(3);
+        info3.setAudio_number(4);
         dbHandler.AddInfoWindowData(info3);
 
         InfoWindowData info4 = new InfoWindowData();
@@ -431,7 +431,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else info4.setFood(listR4.toString());
         info4.setTransport("Reach the site by bus, car and train.");
         info4.setImage("png/bsharri.png");
-        info4.setAudio_number(4);
+        info4.setAudio_number(7);
         dbHandler.AddInfoWindowData(info4);
 
         InfoWindowData info5 = new InfoWindowData();
@@ -448,7 +448,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else info5.setFood(listR5.toString());
         info5.setTransport("Reach the site by bus, car and train.");
         info5.setImage("png/byblos.png");
-        info5.setAudio_number(5);
+        info5.setAudio_number(6);
         dbHandler.AddInfoWindowData(info5);
 
         InfoWindowData info6 = new InfoWindowData();
@@ -465,7 +465,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else info6.setFood(listR6.toString());
         info6.setTransport("Reach the site by bus, car and train.");
         info6.setImage("png/jezzine.png");
-        info6.setAudio_number(6);
+        info6.setAudio_number(5);
         dbHandler.AddInfoWindowData(info6);
 
         for(int i=0;i<dbHandler.getAllInfoWindowData().size();i++){
@@ -578,7 +578,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 InfoWindowData info = dbHandler.getInfoWindowDataByAddress(marker.getPosition().latitude);
                 Intent intent = new Intent(MapsActivity.this,MoreInformation.class);
                 intent.putExtra("InfoID", info.getId());
-                //sendData(""+info.getAudio_number());
+                sendData(""+info.getAudio_number());
                 startActivity(intent);
 
             }
